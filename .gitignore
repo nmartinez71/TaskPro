@@ -1,7 +1,66 @@
-# Byte-compiled / optimized / DLL files
+# === Python general ===
 __pycache__/
 *.py[cod]
+*.pyo
 *.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.manifest
+*.spec
 
-# Virtual environment
+# === Virtual environment ===
 kivy_venv/
+venv
+
+# === IDE/editor files ===
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# === OS-specific ===
+.DS_Store       # macOS
+Thumbs.db       # Windows
+
+# === Logs and temporary files ===
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# === Kivy specific (if using buildozer) ===
+buildozer.spec
+.buildozer/
+.bin/
+.libs/
+*.apk
+*.keystore
+
+# === Android or iOS artifacts (if exporting to mobile) ===
+*.apk
+*.aab
+*.ipa
+*.xcodeproj/
+*.xcworkspace/
+*.gradle/
+.gradle/
+
+# === Unit test / coverage reports ===
+.coverage
+.cache/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+htmlcov/
+
+# === Database / settings files ===
+*.db
+*.sqlite3
+.env
+.env.*
+
