@@ -1,5 +1,4 @@
 from kivymd.uix.screen import MDScreen
-from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
 from kivy.clock import Clock

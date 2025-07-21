@@ -8,6 +8,7 @@ from kivymd.uix.navigationdrawer import MDNavigationLayout
 from screens.tasks_screen import TasksScreen
 from screens.settings_screen import SettingsScreen
 from screens.task_form_screen import TaskForm
+from screens.user_login_screen import UserLoginScreen
 
 from components.topbar import TopBar
 from components.sidebar import Sidebar
@@ -26,6 +27,8 @@ class Home(MDApp):
         tasks_screen = TasksScreen(name="Tasks", topbar=self.topbar, bottom_menu=self.bottom_sheet)
         task_form_screen = TaskForm(name="Task Form")
         settings_screen = SettingsScreen(name="Settings")
+        user_login_screen = UserLoginScreen()
+        
 
         #UI BIG COMPONENTS
         self.root_nav_window = MDNavigationLayout()
@@ -37,6 +40,7 @@ class Home(MDApp):
 
         #UI ORDERING
         #screen assigning
+        self.main_screen_manager.add_widget(user_login_screen)
         self.main_screen_manager.add_widget(tasks_screen)
         self.main_screen_manager.add_widget(settings_screen)
         self.main_screen_manager.add_widget(task_form_screen)
