@@ -14,7 +14,7 @@ class Sidebar(MDNavigationDrawer):
 
         self.menu = MDNavigationDrawerMenu()
         self.label = MDNavigationDrawerLabel(text="Navigation")
-        self.item1 = MDNavigationDrawerItem(text = "Tasks",icon = "user", on_release=lambda x: self.screen_changer.switch_screen("Tasks"))
+        self.item1 = MDNavigationDrawerItem(text = "Tasks",icon = "note-plus-outline", on_release=lambda x: self.screen_changer.switch_screen("Tasks"))
         self.item2 = MDNavigationDrawerItem(text = "Settings",icon = "cog", on_release=lambda x: self.screen_changer.switch_screen("Settings"))
         
 

@@ -6,6 +6,4 @@ class UserLoginScreen(MDScreen):
         super().__init__(*args, **kwargs)
         self.box = MDBoxLayout()
         
-        
-
         self.add_widget(self.box)

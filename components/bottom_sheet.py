@@ -88,4 +88,5 @@ class BottomMenu(MDBottomSheet):
         self.ids.container.add_widget(content)
 
     def add_task(self, *args):
-        print("Add Task clicked")
+        print("Ëntering task form...")
+        self.screen_manager.switch_screen("Task Form")

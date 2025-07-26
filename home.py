@@ -7,14 +7,12 @@ from kivymd.uix.navigationdrawer import MDNavigationLayout
 
 from screens.tasks_screen import TasksScreen
 from screens.settings_screen import SettingsScreen
-from screens.task_form_screen import TaskForm
+from screens.task_form_screen import TaskFormScreen
 from screens.user_login_screen import UserLoginScreen
 
 from components.topbar import TopBar
 from components.sidebar import Sidebar
 from components.bottom_sheet import BottomMenu
-
-
 
 class Home(MDApp):
     def build(self):
@@ -23,13 +21,6 @@ class Home(MDApp):
         self.sidebar = Sidebar(screen_changer = self)
         self.topbar = TopBar(sidebar=self.sidebar)
 
-        #SCREENS
-        tasks_screen = TasksScreen(name="Tasks", topbar=self.topbar, bottom_menu=self.bottom_sheet)
-        task_form_screen = TaskForm(name="Task Form")
-        settings_screen = SettingsScreen(name="Settings")
-        user_login_screen = UserLoginScreen()
-        
-
         #UI BIG COMPONENTS
         self.root_nav_window = MDNavigationLayout()
         self.root_screen_manager = MDScreenManager()
@@ -37,6 +28,12 @@ class Home(MDApp):
 
         self.main_box = MDBoxLayout(orientation='vertical', size_hint=(1, 1), pos_hint={'top': 1}) #size hint 1, 0.85 originally
         self.main_screen_manager = MDScreenManager(size_hint=(1, 1), pos_hint={'top': 1}) #saize hint 1, 0.50 originally
+
+        #SCREENS
+        tasks_screen = TasksScreen(name="Tasks", topbar=self.topbar, bottom_menu=self.bottom_sheet, screen_changer=self)
+        task_form_screen = TaskFormScreen(name="Task Form", screen_changer=self, tasks_screen_instance=tasks_screen)
+        settings_screen = SettingsScreen(name="Settings")
+        user_login_screen = UserLoginScreen()
 
         #UI ORDERING
         #screen assigning
