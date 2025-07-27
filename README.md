@@ -1,5 +1,5 @@
 # TaskPro
-# TaskPro
+
 This project is a KivyMD-based task tracking app for Team F.
 
 ## Prerequisites:
@@ -27,8 +27,6 @@ This project is a KivyMD-based task tracking app for Team F.
     ```bash
     git clone https://github.com/nmartinez71/TaskPro.git
     cd TaskPro
-    git clone https://github.com/nmartinez71/TaskPro.git
-    cd TeamF-TrackingProject
 
 #### 1.5 (Optional): Open the Project in VS Code
 If you're using Visual Studio Code:
@@ -61,10 +59,6 @@ By Activating the environment, Python will be able to access the dependencies an
 - With the environment activated, run this to start the app:
     
     python main.py
-
-- With the environment activated, start the app:
-    ```bash
-    kivy_venv\Scripts\activate 
 
 
 
