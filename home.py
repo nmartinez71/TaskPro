@@ -63,5 +63,3 @@ class Home(MDApp):
 
     def change_topbar_icons(self):
         pass
-
-Home().run()

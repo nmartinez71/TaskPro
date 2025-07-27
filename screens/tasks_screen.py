@@ -3,11 +3,15 @@ from kivymd.uix.list import MDList
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
+
 from components.tasksitem import TaskItem
 from components.bottom_sheet import BottomMenu
 from components.bottom_handle import HandleTrigger
+
+from datetime import datetime
 from firestore_api import FirestoreAPI
-from encryption import encrypt_text, decrypt_text
+from utils.encryption import encrypt_text, decrypt_text
+from utils.notifications import schedule_notification, cancel_notification
 
 class TasksScreen(MDScreen):
     def __init__(self, topbar=None, bottom_menu=None, screen_changer=None, **kwargs):
@@ -47,13 +51,17 @@ class TasksScreen(MDScreen):
                 parent_screen=self,
                 doc_id=doc_id
             )
+            # schedule_notification(
+            #     task_title=decrypted_text,
+            #     task_datetime=datetime.strptime(f"{task_date} {task_time}", "%Y-%m-%d %H:%M"),
+            #     doc_id=doc_id
+            # )
             self.task_list.add_widget(task_item)
             self.task_items.append(task_item)
         else:
             print("Failed to add task to Firestore.")
 
     def open_task_for_editing(self):
-        
         for item in self.task_items:
             if item.is_checked():
                 if self.screen_changer:
@@ -80,6 +88,12 @@ class TasksScreen(MDScreen):
         )
         if success:
             print("editing successful...")
+            # cancel_notification(doc_id)
+            # schedule_notification(
+            #     task_title=task_text,
+            #     task_datetime=datetime.strptime(f"{task_date} {task_time}", "%Y-%m-%d %H:%M"),
+            #     doc_id=doc_id
+            # )
             for item in self.task_items:
                 if item.doc_id == doc_id:
                     item.text = task_text
