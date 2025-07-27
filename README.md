@@ -1,4 +1,4 @@
-# TeamF-TrackingProject
+# TaskPro
 This project is a KivyMD-based task tracking app for Team F.
 
 ## Prerequisites:
@@ -24,7 +24,7 @@ This project is a KivyMD-based task tracking app for Team F.
 - 2. Cd/Navigate to your preferred folder (preferably empyty)
 - 3. Copy and run this command:
     ```bash
-    git clone https://github.com/nmartinez71/TeamF-TrackingProject.git
+    git clone https://github.com/nmartinez71/TaskPro.git
     cd TeamF-TrackingProject
 
 #### 1.5 (Optional): Open the Project in VS Code
