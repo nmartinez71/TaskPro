@@ -4,15 +4,7 @@ import sys
 import platform
 
 VENV_NAME = "kivy_venv"
-REQUIREMENTS = [
-    "kivy==2.3.0",
-    "kivymd==1.1.1",
-    "cryptography",
-    "plyer",
-    "firebase-admin",
-    "requests",
-    "python-dotenv"
-]
+REQUIREMENTS_FILE = "requirements.txt"
 
 def run_command(cmd, env=None):
     try:
@@ -35,9 +27,12 @@ def install_dependencies():
         VENV_NAME, "Scripts" if platform.system() == "Windows" else "bin", "pip"
     )
 
-    for package in REQUIREMENTS:
-        print(f"→ Installing: {package}")
-        run_command(f'"{pip_path}" install {package}')
+    if not os.path.exists(REQUIREMENTS_FILE):
+        print(f"'{REQUIREMENTS_FILE}' not found.")
+        sys.exit(1)
+
+    run_command(f'"{pip_path}" install -r {REQUIREMENTS_FILE}')
+
 
 def post_install_notice():
     activation_cmd = (
