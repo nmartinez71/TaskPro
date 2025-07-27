@@ -1,9 +1,12 @@
-# Ignore virtual environment
+#Ignore virtual environment
 kivy_venv/
 
-# Ignore Python bytecode
+#Ignore Python related code
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.py[cod]
+
+#Ignore encryption creds
+secret.key

@@ -7,6 +7,7 @@ from components.tasksitem import TaskItem
 from components.bottom_sheet import BottomMenu
 from components.bottom_handle import HandleTrigger
 from firestore_api import FirestoreAPI
+from encryption import encrypt_text, decrypt_text
 
 class TasksScreen(MDScreen):
     def __init__(self, topbar=None, bottom_menu=None, screen_changer=None, **kwargs):
@@ -33,10 +34,13 @@ class TasksScreen(MDScreen):
         self.populate_tasks()
 
     def add_tasks(self, task_text, task_date, task_time):
-        doc_id = self.api.add_task(task_text, task_date, task_time)
+        encrypted_text = encrypt_text(task_text)
+        doc_id = self.api.add_task(encrypted_text, task_date, task_time)
+        decrypted_text = decrypt_text(encrypted_text)
+
         if doc_id:
             task_item = TaskItem(
-                text=task_text,
+                text=decrypted_text,
                 date=task_date,
                 time=task_time,
                 topbar=self.topbar,
@@ -49,10 +53,12 @@ class TasksScreen(MDScreen):
             print("Failed to add task to Firestore.")
 
     def open_task_for_editing(self):
+        
         for item in self.task_items:
             if item.is_checked():
                 if self.screen_changer:
                     print("tasks opened for editing...")
+                    self.clear_topbar_icons()
                     form = self.screen_changer.main_screen_manager.get_screen('Task Form')
                     form.populate_fields(
                         editing=True,
@@ -65,9 +71,10 @@ class TasksScreen(MDScreen):
                 break
 
     def update_task(self, task_text, task_date, task_time, doc_id):
+        encrypted_text = encrypt_text(task_text)
         success = self.api.update_task(
             doc_id=doc_id,
-            task_title=task_text,
+            task_title=encrypted_text,
             task_date=task_date,
             task_time=task_time
         )
@@ -89,7 +96,7 @@ class TasksScreen(MDScreen):
         tasks = self.api.get_tasks()
         for task in tasks:
             task_item = TaskItem(
-                text=task.get("title", ""),
+                text=decrypt_text(task.get("title", "")),
                 date=task.get("date", ""),
                 time=task.get("time", ""),
                 topbar=self.topbar,

@@ -86,23 +86,23 @@ class TaskFormScreen(MDScreen):
             print("Edit Task finished...")
 
     #Only called when editing
-    def populate_fields(self, editing=True, task_text='', task_date='', task_time='', doc_id=None):
+    def populate_fields(self, editing=False, task_text='', task_date='', task_time='', doc_id=None):
         print("Populating form... editing:", editing)
         
-        # Clear input fields first
+        #Clear input fields first
         self.task_input.text = task_text if editing else ''
         self.date_button.text = task_date if editing else ''
         self.time_button.text = task_time if editing else ''
         
-        # Store editing state and doc_id
+        #Store editing state and doc_id
         self.editing = editing
         self.doc_id = doc_id
 
-        # Make sure we unbind previous bindings
+        #Make sure we unbind previous bindings
         self.task_button.unbind(on_release=self.add_task)
         self.task_button.unbind(on_release=self.edit_task)
 
-        # Bind appropriate function
+        #Bind function
         if editing:
             self.task_button.text = "Update Task"
             self.task_button.bind(on_release=self.edit_task)
