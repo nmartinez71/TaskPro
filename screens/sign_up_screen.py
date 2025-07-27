@@ -120,6 +120,7 @@ class SignUpScreen(MDScreen):
         else:
             # insert way to save to database
             if self.screen_changer:
+    
                 self.screen_changer.show_login() #moves to login screen if everything checks out
 
     def on_ref_press(self, instance, ref): #function to move to login screen if already has account
