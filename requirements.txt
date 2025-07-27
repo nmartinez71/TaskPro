@@ -1,7 +1,9 @@
-kivy==2.3.0
-kivymd==1.1.1
+kivy[base]
+kivy_examples
+kivymd==1.2.0
 cryptography
 plyer
 firebase-admin
 requests
 python-dotenv
+schedule
