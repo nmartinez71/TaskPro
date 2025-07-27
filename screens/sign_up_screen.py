@@ -13,7 +13,6 @@ from kivymd.uix.button import MDFlatButton
 class SignUpScreen(MDScreen):
     def __init__(self, screen_changer=None, **kwargs):
         super().__init__(**kwargs)
-        self.name = "SignUp" #name of screen for ScreenManager
         self.screen_changer = screen_changer
 
         #Helps Toggle visability for both password boxes
@@ -125,7 +124,7 @@ class SignUpScreen(MDScreen):
 
     def on_ref_press(self, instance, ref): #function to move to login screen if already has account
         if ref == "login" and self.screen_changer:
-            self.screen_changer.show_login()
+            self.screen_changer.switch_root_screen("Login")
     
     def show_alert(self, text): #function sfor showing dialog box, potentially could make more pretty?
         if hasattr(self, 'dialog') and self.dialog:

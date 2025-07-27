@@ -12,7 +12,6 @@ from kivy.utils import get_color_from_hex
 class UserLoginScreen(MDScreen):
     def __init__(self, screen_changer=None, **kwargs): #initialize screen, added screen_changer for callbacks
         super().__init__(**kwargs)
-        self.name = "Login" #Named screen for ScreenManager
         self.screen_changer = screen_changer 
         self.password_visible = False #Starts password as not visible
 
@@ -95,10 +94,11 @@ class UserLoginScreen(MDScreen):
         
     def on_ref_press(self, instance, ref): # add functionality to redirect to signup screen not yet created
         if ref == "signup":
-            self.screen_changer.show_signup()
+            self.screen_changer.switch_root_screen("Sign Up")
 
     def login(self, *args): #logic for is username has admin privilage and password is passing 
                             #and true then screen changes to home. not sure how to check this againts the database?
         if self.username.text == "admin" and self.password.text == "pass":
-            if self.screen_changer:
-                self.screen_changer.show_home()
+            pass
+            # if self.screen_changer:
+            #     self.screen_changer.show_home()

@@ -9,6 +9,7 @@ from screens.tasks_screen import TasksScreen
 from screens.settings_screen import SettingsScreen
 from screens.task_form_screen import TaskFormScreen
 from screens.user_login_screen import UserLoginScreen
+from screens.sign_up_screen import SignUpScreen
 
 from components.topbar import TopBar
 from components.sidebar import Sidebar
@@ -24,7 +25,7 @@ class Home(MDApp):
         #UI BIG COMPONENTS
         self.root_nav_window = MDNavigationLayout()
         self.root_screen_manager = MDScreenManager()
-        self.root_screen = MDScreen()
+        self.root_screen = MDScreen(name = "Root Screen")
 
         self.main_box = MDBoxLayout(orientation='vertical', size_hint=(1, 1), pos_hint={'top': 1}) #size hint 1, 0.85 originally
         self.main_screen_manager = MDScreenManager(size_hint=(1, 1), pos_hint={'top': 1}) #saize hint 1, 0.50 originally
@@ -33,14 +34,19 @@ class Home(MDApp):
         tasks_screen = TasksScreen(name="Tasks", topbar=self.topbar, bottom_menu=self.bottom_sheet, screen_changer=self)
         task_form_screen = TaskFormScreen(name="Task Form", screen_changer=self, tasks_screen_instance=tasks_screen)
         settings_screen = SettingsScreen(name="Settings")
-        user_login_screen = UserLoginScreen()
+
+        #ROOT SCREENS
+        user_login_screen = UserLoginScreen(name="Login", screen_changer=self)
+        sign_up_screen = SignUpScreen(name="Sign Up", screen_changer=self)
 
         #UI ORDERING
         #screen assigning
-        self.main_screen_manager.add_widget(user_login_screen)
         self.main_screen_manager.add_widget(tasks_screen)
         self.main_screen_manager.add_widget(settings_screen)
         self.main_screen_manager.add_widget(task_form_screen)
+
+        self.root_screen_manager.add_widget(user_login_screen)
+        self.root_screen_manager.add_widget(sign_up_screen)
 
         #content area
         self.main_box.add_widget(self.topbar)
@@ -59,6 +65,11 @@ class Home(MDApp):
     def switch_screen(self, screen_name: str):
         print("switch to", screen_name)
         self.main_screen_manager.current = screen_name
+        self.topbar.title = screen_name
+
+    def switch_root_screen(self, screen_name: str):
+        print("switch to", screen_name)
+        self.root_screen_manager.current = screen_name
         self.topbar.title = screen_name
 
     def change_topbar_icons(self):
