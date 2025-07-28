@@ -59,6 +59,3 @@ By Activating the environment, Python will be able to access the dependencies an
 - With the environment activated, run this to start the app:
     ```bash
     python main.py
-
-
-

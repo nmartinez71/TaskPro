@@ -75,6 +75,15 @@ class UserLoginScreen(MDScreen):
         login_btn.bind(on_release=self.login) #when clicked calls the "login" function
         card.add_widget(login_btn)
 
+        screen_btn = MDRaisedButton(
+            text="Continue without Login",
+            pos_hint={"center_x": 0.5},
+            md_bg_color=(0, 0.5, 1, 1),
+            text_color=(1, 1, 1, 1)
+        )
+        screen_btn.bind(on_release=self.change_screen)
+        card.add_widget(screen_btn)
+
         # Sign up button
         signup_label = MDLabel(
             text='Don\'t have an account? [ref=signup][color=#1565C0]Sign Up[/color][/ref]', #Makes the "sign Up" text blue and clickable
@@ -102,3 +111,6 @@ class UserLoginScreen(MDScreen):
             pass
             # if self.screen_changer:
             #     self.screen_changer.show_home()
+
+    def change_screen(self, instance):
+        self.screen_changer.switch_root_screen("Root Screen")

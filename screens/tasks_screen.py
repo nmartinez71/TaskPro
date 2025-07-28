@@ -25,7 +25,7 @@ class TasksScreen(MDScreen):
         open_button = HandleTrigger(bottom_menu=self.tasks_bottom_sheet)
 
         self.main_content = MDBoxLayout(orientation="vertical", padding="8dp")
-        self.main_content.add_widget(MDLabel(text="Main Content", size_hint_y=None, height="40dp"))
+        self.main_content.add_widget(MDLabel(text="Tasks for You", size_hint_y=None, height="40dp"))
 
         scroll = MDScrollView()
         self.task_list = MDList()
