@@ -7,6 +7,7 @@ from kivymd.uix.pickers import MDDatePicker, MDTimePicker
 class TaskFormScreen(MDScreen):
     def __init__(self, screen_changer=None, tasks_screen_instance = None, **kwargs):
         super().__init__(**kwargs)
+        self.adaptive_height = True
         self.screen_manager = screen_changer
         self.tasks_screen = tasks_screen_instance
         self.doc_id = None
@@ -17,8 +18,10 @@ class TaskFormScreen(MDScreen):
         layout = MDBoxLayout(
             orientation="vertical",
             padding="20dp",
-            spacing="20dp"
+            spacing="20dp",
+            size_hint_y=None
         )
+        layout.bind(minimum_height=layout.setter("height"))
 
         self.task_input = MDTextField(
             hint_text="Enter task description",
@@ -94,11 +97,11 @@ class TaskFormScreen(MDScreen):
         self.date_button.text = task_date if editing else ''
         self.time_button.text = task_time if editing else ''
         
-        #Store editing state and doc_id
+       
         self.editing = editing
         self.doc_id = doc_id
 
-        #Make sure we unbind previous bindings
+        #Make sure unbind previous bindings
         self.task_button.unbind(on_release=self.add_task)
         self.task_button.unbind(on_release=self.edit_task)
 

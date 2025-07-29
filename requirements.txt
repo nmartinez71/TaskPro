@@ -2,6 +2,7 @@ kivy[base]
 kivy_examples
 kivymd==1.2.0
 cryptography
+bcrypt
 plyer
 firebase-admin
 requests

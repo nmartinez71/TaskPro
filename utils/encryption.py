@@ -1,25 +1,33 @@
+import os
+import base64
 from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
 
-def generate_key():
-    key = Fernet.generate_key()
-    with open("secret.key", "wb") as key_file:
-        key_file.write(key)
+def generate_salt() -> bytes:
+    return os.urandom(16)
 
-def load_key():
-    with open("secret.key", "rb") as key_file:
-        return key_file.read()
+def derive_key(password: str, salt: bytes) -> bytes:
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100_000,
+        backend=default_backend()
+    )
+    return base64.urlsafe_b64encode(kdf.derive(password.encode()))
 
-def encrypt_text(plain_text):
-    key = load_key()
-    f = Fernet(key)
-    token = f.encrypt(plain_text.encode()).decode()
-    return "enc:" + token
+def encode_salt(salt: bytes) -> str:
+    return base64.b64encode(salt).decode()
 
-def decrypt_text(encrypted_text):
-    if not encrypted_text.startswith("enc:"):
-        return encrypted_text
-    key = load_key()
-    f = Fernet(key)
-    token = encrypted_text[4:]
-    return f.decrypt(token.encode()).decode()
+def decode_salt(salt_str: str) -> bytes:
+    return base64.b64decode(salt_str)
 
+def encrypt_text(text, key):
+    fernet = Fernet(key)
+    return fernet.encrypt(text.encode()).decode()
+
+def decrypt_text(encrypted_text, key):
+    fernet = Fernet(key)
+    return fernet.decrypt(encrypted_text.encode()).decode()

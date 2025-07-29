@@ -1,3 +1,4 @@
+from kivymd.app import MDApp
 from kivymd.uix.screen import MDScreen
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.textfield import MDTextField
@@ -8,10 +9,16 @@ from kivymd.uix.card import MDCard
 from kivymd.uix.button import MDIconButton
 from kivy.utils import get_color_from_hex
 
+from utils.encryption import derive_key, decode_salt
+
+from firestore_api import FirestoreAPI
+import bcrypt
+
 
 class UserLoginScreen(MDScreen):
     def __init__(self, screen_changer=None, **kwargs): #initialize screen, added screen_changer for callbacks
         super().__init__(**kwargs)
+        self.api = FirestoreAPI(project_id="teamf-ae838", collection="users")
         self.screen_changer = screen_changer 
         self.password_visible = False #Starts password as not visible
 
@@ -75,14 +82,14 @@ class UserLoginScreen(MDScreen):
         login_btn.bind(on_release=self.login) #when clicked calls the "login" function
         card.add_widget(login_btn)
 
-        screen_btn = MDRaisedButton(
-            text="Continue without Login",
-            pos_hint={"center_x": 0.5},
-            md_bg_color=(0, 0.5, 1, 1),
-            text_color=(1, 1, 1, 1)
-        )
-        screen_btn.bind(on_release=self.change_screen)
-        card.add_widget(screen_btn)
+        # screen_btn = MDRaisedButton(
+        #     text="Continue without Login",
+        #     pos_hint={"center_x": 0.5},
+        #     md_bg_color=(0, 0.5, 1, 1),
+        #     text_color=(1, 1, 1, 1)
+        # )
+        # screen_btn.bind(on_release=self.change_screen)
+        # card.add_widget(screen_btn)
 
         # Sign up button
         signup_label = MDLabel(
@@ -105,12 +112,44 @@ class UserLoginScreen(MDScreen):
         if ref == "signup":
             self.screen_changer.switch_root_screen("Sign Up")
 
-    def login(self, *args): #logic for is username has admin privilage and password is passing 
-                            #and true then screen changes to home. not sure how to check this againts the database?
-        if self.username.text == "admin" and self.password.text == "pass":
-            pass
-            # if self.screen_changer:
-            #     self.screen_changer.show_home()
+    def login(self, *args):
+        username_input = self.username.text.strip()
+        password_input = self.password.text.strip()
 
-    def change_screen(self, instance):
-        self.screen_changer.switch_root_screen("Root Screen")
+        if not username_input or not password_input:
+            print("Username and password required.")
+            return
+
+        user = self.api.get_user_by_username(username_input)
+        if user:
+            hashed_pw = user.get("password")
+            salt_b64 = user.get("salt")  # Base64-encoded salt stored in Firestore
+
+            if not hashed_pw or not salt_b64:
+                print("User record is incomplete.")
+                return
+
+            if bcrypt.checkpw(password_input.encode(), hashed_pw.encode()):
+                try:
+                    salt = decode_salt(salt_b64)  # decode base64 to bytes
+                    key = derive_key(password_input, salt)
+
+                    # Store globally
+                    from utils import globals
+                    globals.encryption_key = key
+                    globals.current_user_id = user.get("doc_id")
+
+                    print("Login successful.")
+
+                    app = MDApp.get_running_app()
+                    print(f"Current user ID: {globals.current_user_id}")
+                    app.init_user_screens()
+                    self.screen_changer.switch_root_screen("Root Screen")
+
+
+                except Exception as e:
+                    print(f"Encryption key derivation failed: {e}")
+            else:
+                print("Incorrect password.")
+        else:
+            print("User not found.")

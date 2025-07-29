@@ -8,11 +8,18 @@ from kivymd.uix.card import MDCard
 from kivy.utils import get_color_from_hex
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.button import MDFlatButton
+from firestore_api import FirestoreAPI
+import bcrypt
+import base64
+from utils.encryption import generate_salt, derive_key, encode_salt
+
 
 
 class SignUpScreen(MDScreen):
     def __init__(self, screen_changer=None, **kwargs):
         super().__init__(**kwargs)
+        self.api = FirestoreAPI(project_id="teamf-ae838", collection="users")
+
         self.screen_changer = screen_changer
 
         #Helps Toggle visability for both password boxes
@@ -118,10 +125,25 @@ class SignUpScreen(MDScreen):
         elif self.username.text == "" or self.password.text == "":
             self.show_alert("Please Complete All Fields") #Shows alert if boxes are left empy
         else:
-            # insert way to save to database
-            if self.screen_changer:
-    
-                self.screen_changer.show_login() #moves to login screen if everything checks out
+            hashed_password = bcrypt.hashpw(self.password.text.encode(), bcrypt.gensalt()).decode()
+
+            salt = generate_salt() #os.urandom(16)
+            encoded_salt = base64.b64encode(salt).decode()
+
+            encryption_key = derive_key(self.password.text, salt)
+
+            user_id = self.api.add_user(
+                username=self.username.text,
+                password_hash=hashed_password,
+                salt_b64=encoded_salt
+            )
+
+            if user_id:
+                # Switch screen to Login after successful registration
+                if self.screen_changer:
+                    self.screen_changer.switch_root_screen("Login")
+            else:
+                self.show_alert("Failed to register user. Please try again.")
 
     def on_ref_press(self, instance, ref): #function to move to login screen if already has account
         if ref == "login" and self.screen_changer:

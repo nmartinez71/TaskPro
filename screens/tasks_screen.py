@@ -12,11 +12,17 @@ from datetime import datetime
 from firestore_api import FirestoreAPI
 from utils.encryption import encrypt_text, decrypt_text
 from utils.notifications import schedule_notification, cancel_notification
+from utils import globals
+
 
 class TasksScreen(MDScreen):
-    def __init__(self, topbar=None, bottom_menu=None, screen_changer=None, **kwargs):
+    def __init__(self,topbar=None, bottom_menu=None, screen_changer=None, **kwargs):
         super().__init__(**kwargs)
+        self.user_id = globals.current_user_id
+        self.encryption_key = globals.encryption_key
         self.api = FirestoreAPI(project_id="teamf-ae838", collection="todos")
+        
+        self.complete = False
 
         self.tasks_bottom_sheet = bottom_menu
         self.topbar = topbar
@@ -35,12 +41,11 @@ class TasksScreen(MDScreen):
         self.add_widget(self.main_content)
 
         self.task_items = []
-        self.populate_tasks()
 
     def add_tasks(self, task_text, task_date, task_time):
-        encrypted_text = encrypt_text(task_text)
-        doc_id = self.api.add_task(encrypted_text, task_date, task_time)
-        decrypted_text = decrypt_text(encrypted_text)
+        encrypted_text = encrypt_text(task_text, self.encryption_key)
+        doc_id = self.api.add_task(self.user_id, encrypted_text, task_date, task_time)
+        decrypted_text = decrypt_text(encrypted_text, self.encryption_key)
 
         if doc_id:
             task_item = TaskItem(
@@ -79,9 +84,11 @@ class TasksScreen(MDScreen):
                 break
 
     def update_task(self, task_text, task_date, task_time, doc_id):
-        encrypted_text = encrypt_text(task_text)
+        encrypted_text = encrypt_text(task_text, self.encryption_key)
         success = self.api.update_task(
             doc_id=doc_id,
+            completed = self.complete,
+            user_id = self.user_id,
             task_title=encrypted_text,
             task_date=task_date,
             task_time=task_time
@@ -105,12 +112,18 @@ class TasksScreen(MDScreen):
             print("Failed to edit task.")
 
     def populate_tasks(self):
+        if not self.user_id:
+            print("No user ID set.")
+            return
+        else:
+            print("Accessing global user ID from populate_tasks...")
+        
         self.task_list.clear_widgets()
         self.task_items = []
-        tasks = self.api.get_tasks()
+        tasks = self.api.get_tasks(self.user_id)
         for task in tasks:
             task_item = TaskItem(
-                text=decrypt_text(task.get("title", "")),
+                text=decrypt_text(task.get("title", ""), self.encryption_key),
                 date=task.get("date", ""),
                 time=task.get("time", ""),
                 topbar=self.topbar,

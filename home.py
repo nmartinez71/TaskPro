@@ -1,4 +1,5 @@
 from kivymd.app import MDApp
+from cleanup import clear_globals
 from kivy.metrics import dp
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.screen import MDScreen
@@ -31,9 +32,9 @@ class Home(MDApp):
         self.main_screen_manager = MDScreenManager(size_hint=(1, 1), pos_hint={'top': 1}) #saize hint 1, 0.50 originally
 
         #SCREENS
-        tasks_screen = TasksScreen(name="Tasks", topbar=self.topbar, bottom_menu=self.bottom_sheet, screen_changer=self)
-        task_form_screen = TaskFormScreen(name="Task Form", screen_changer=self, tasks_screen_instance=tasks_screen)
-        settings_screen = SettingsScreen(name="Settings")
+        # tasks_screen = TasksScreen(name="Tasks", topbar=self.topbar, bottom_menu=self.bottom_sheet, screen_changer=self)
+        # task_form_screen = TaskFormScreen(name="Task Form", screen_changer=self, tasks_screen_instance=tasks_screen)
+        # settings_screen = SettingsScreen(name="Settings")
 
         #ROOT SCREENS
         user_login_screen = UserLoginScreen(name="Login", screen_changer=self)
@@ -41,9 +42,9 @@ class Home(MDApp):
 
         #UI ORDERING
         #screen assigning
-        self.main_screen_manager.add_widget(tasks_screen)
-        self.main_screen_manager.add_widget(settings_screen)
-        self.main_screen_manager.add_widget(task_form_screen)
+        # self.main_screen_manager.add_widget(tasks_screen)
+        # self.main_screen_manager.add_widget(settings_screen)
+        # self.main_screen_manager.add_widget(task_form_screen)
 
         self.root_screen_manager.add_widget(user_login_screen)
         self.root_screen_manager.add_widget(sign_up_screen)
@@ -74,3 +75,29 @@ class Home(MDApp):
 
     def change_topbar_icons(self):
         pass
+
+    def on_stop(self): #wehn app is closed
+        clear_globals()
+
+    def init_user_screens(self):
+        print("Intializing user screens...")
+        # Create screens fresh with updated globals
+        tasks_screen = TasksScreen(name="Tasks", topbar=self.topbar, bottom_menu=self.bottom_sheet, screen_changer=self)
+        task_form_screen = TaskFormScreen(name="Task Form", screen_changer=self, tasks_screen_instance=tasks_screen)
+        settings_screen = SettingsScreen(name="Settings")
+
+        # Clear old screens if needed
+        for screen_name in ["Tasks", "Task Form", "Settings"]:
+            if self.main_screen_manager.has_screen(screen_name):
+                screen = self.main_screen_manager.get_screen(screen_name)
+                self.main_screen_manager.remove_widget(screen)
+
+        # Add the new screens
+        self.main_screen_manager.add_widget(tasks_screen)
+        self.main_screen_manager.add_widget(task_form_screen)
+        self.main_screen_manager.add_widget(settings_screen)
+
+        tasks_screen.populate_tasks()
+
+        print("End init...")
+
