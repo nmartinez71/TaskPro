@@ -14,7 +14,7 @@ class HandleTrigger(ButtonBehavior, Widget):
 
         self.bottom_menu = bottom_menu or BottomMenu()
 
-        # Bind once, no matter how bottom sheet is dismissed
+        #Bind once, no matter how bottom sheet is dismissed
         self.bottom_menu.bind(on_close=self._restore)
 
 
@@ -38,10 +38,10 @@ class HandleTrigger(ButtonBehavior, Widget):
         self.rect.size = self.size
 
     def on_release(self):
-        # Fade out when tapped
+        #Fade out when tapped
         Animation(opacity=0, duration=0.15).start(self)
         Clock.schedule_once(lambda dt: self.bottom_menu.open(), 0)
 
     def _restore(self, *args):
-        # Always fade back in when sheet is dismissed
+        #Always fade back in when sheet is dismissed
         Animation(opacity=0.5, duration=0.2).start(self)

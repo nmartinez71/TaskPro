@@ -21,7 +21,7 @@ class BottomMenu(MDBottomSheet):
         self.height = dp(315) # Adjusted for better content fit
         self.bg_color = (1, 1, 1, 1)
 
-        # === Handle Section ===
+        
         handle = MDBottomSheetDragHandle()
         title = MDBottomSheetDragHandleTitle(text="Task Options", adaptive_height=True)
         close_button = MDBottomSheetDragHandleButton(icon="close", on_release=self.dismiss)
@@ -30,10 +30,10 @@ class BottomMenu(MDBottomSheet):
         handle.add_widget(close_button)
         self.ids.drag_handle_container.add_widget(handle)
 
-        # === Main Content ===
+        
         content = MDBottomSheetContent(orientation="vertical", padding=dp(16))
 
-        # Scrollable row of FABs with labels
+       
         scroll = MDScrollView(size_hint_y=None, height=dp(200))
         icon_row = MDBoxLayout(
             orientation="horizontal",
@@ -42,7 +42,7 @@ class BottomMenu(MDBottomSheet):
             padding=(dp(10), 0),
             size_hint_x=None,
         )
-        icon_row.width = dp(500)  # Enough to allow horizontal scrolling
+        icon_row.width = dp(500)  
 
         # Add FAB + label groups
         for icon_name, label_text, callback in [
@@ -84,7 +84,7 @@ class BottomMenu(MDBottomSheet):
         scroll.add_widget(icon_row)
         content.add_widget(scroll)
 
-        # Add to bottom sheet
+        #Add to bottom sheet
         self.ids.container.add_widget(content)
 
     def add_task(self, *args):

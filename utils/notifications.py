@@ -27,11 +27,16 @@ def schedule_notification(task_title, task_datetime, doc_id):
 
     def match_time_job():
         now = datetime.now()
-        if now.strftime("%Y-%m-%d %H:%M") == task_datetime.strftime("%Y-%m-%d %H:%M"):
+        delta = abs((task_datetime - now).total_seconds())
+        if delta < 60:  # within the same minute
+            print(f"[TRIGGERING] Notification for {task_title}")
             job()
             return schedule.CancelJob
+        else:
+            print(f"[PENDING] {task_title} | now: {now.strftime('%H:%M:%S')} vs target: {task_datetime.strftime('%H:%M:%S')}")
 
-    scheduled_jobs[doc_id] = schedule.every(1).minutes.do(match_time_job)
+
+    scheduled_jobs[doc_id] = schedule.every(20).seconds.do(match_time_job)
 
 def cancel_notification(doc_id):
     if doc_id in scheduled_jobs:

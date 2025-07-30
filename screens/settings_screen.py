@@ -2,7 +2,7 @@ from kivymd.uix.screen import MDScreen
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
 from kivy.clock import Clock
-from components.bottom_sheet import BottomMenu  # Your custom bottom sheet class
+from components.bottom_sheet import BottomMenu
 from components.bottom_handle import HandleTrigger
 
 class SettingsScreen(MDScreen):
@@ -10,13 +10,11 @@ class SettingsScreen(MDScreen):
         super().__init__(**kwargs)
         self.height = "500dp"
 
-        # Create once
         self.bottom_sheet = BottomMenu()
         self.add_widget(self.bottom_sheet)
         
         open_button = HandleTrigger(bottom_menu=self.bottom_sheet)
 
-        # Layout
         layout = MDBoxLayout(orientation="vertical")
         label = MDLabel(text="Settings", halign="center")
 

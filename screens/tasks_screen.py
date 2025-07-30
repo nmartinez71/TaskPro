@@ -3,10 +3,14 @@ from kivymd.uix.list import MDList
 from kivymd.uix.scrollview import MDScrollView
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.label import MDLabel
+from kivymd.uix.button import MDFlatButton
+from kivymd.uix.segmentedbutton import MDSegmentedButton, MDSegmentedButtonItem
 
 from components.tasksitem import TaskItem
 from components.bottom_sheet import BottomMenu
 from components.bottom_handle import HandleTrigger
+from components.dialog import show_dialog
+
 
 from datetime import datetime
 from firestore_api import FirestoreAPI
@@ -18,31 +22,46 @@ from utils import globals
 class TasksScreen(MDScreen):
     def __init__(self,topbar=None, bottom_menu=None, screen_changer=None, **kwargs):
         super().__init__(**kwargs)
+        #VARS
         self.user_id = globals.current_user_id
         self.encryption_key = globals.encryption_key
         self.api = FirestoreAPI(project_id="teamf-ae838", collection="todos")
-        
         self.complete = False
 
+        #Imported KivyMD components
         self.tasks_bottom_sheet = bottom_menu
         self.topbar = topbar
         self.screen_changer = screen_changer
-
-        open_button = HandleTrigger(bottom_menu=self.tasks_bottom_sheet)
-
-        self.main_content = MDBoxLayout(orientation="vertical", padding="8dp")
-        self.main_content.add_widget(MDLabel(text="Tasks for You", size_hint_y=None, height="40dp"))
-
-        scroll = MDScrollView()
+        
         self.task_list = MDList()
-        scroll.add_widget(self.task_list)
-        self.main_content.add_widget(scroll)
-        self.main_content.add_widget(open_button)
-        self.add_widget(self.main_content)
+        self.complete_list =MDList()
+        # self.segmented_buttons = MDSegmentedButton(MDSegmentedButtonItem(icon="cog"))
+    
+
+        task_scroll = MDScrollView()
+        task_scroll.add_widget(self.task_list)
+
+        self.task_layout = MDBoxLayout(orientation="vertical", padding="8dp", size_hint_y=1)
+        # self.task_layout.add_widget(self.segmented_buttons)
+        self.task_layout.add_widget(task_scroll)
+        
+        self.add_widget(self.task_layout)
 
         self.task_items = []
 
     def add_tasks(self, task_text, task_date, task_time):
+        if not task_date or task_date.strip() == "" or task_date.strip().lower() == "pick date":
+            show_dialog(self, "Missing Date", "Please select a date for the task.")
+            return
+
+        if not task_time or task_time.strip() == "" or task_time.strip().lower() == "pick time":
+            show_dialog(self, "Missing Time", "Please select a time for the task.")
+            return
+
+        if not task_text or task_text.strip() == "":
+            show_dialog(self, "Empty Task", "Please enter a task description.")
+            return
+
         encrypted_text = encrypt_text(task_text, self.encryption_key)
         doc_id = self.api.add_task(self.user_id, encrypted_text, task_date, task_time)
         decrypted_text = decrypt_text(encrypted_text, self.encryption_key)
@@ -56,15 +75,16 @@ class TasksScreen(MDScreen):
                 parent_screen=self,
                 doc_id=doc_id
             )
-            # schedule_notification(
-            #     task_title=decrypted_text,
-            #     task_datetime=datetime.strptime(f"{task_date} {task_time}", "%Y-%m-%d %H:%M"),
-            #     doc_id=doc_id
-            # )
+            schedule_notification(
+                task_title=decrypted_text,
+                task_datetime=datetime.strptime(f"{task_date} {task_time}", "%Y-%m-%d %H:%M:%S"),
+                doc_id=doc_id
+            )
             self.task_list.add_widget(task_item)
             self.task_items.append(task_item)
         else:
-            print("Failed to add task to Firestore.")
+            show_dialog(self, "Error", "Failed to add task to Firestore.")
+
 
     def open_task_for_editing(self):
         for item in self.task_items:
@@ -95,12 +115,12 @@ class TasksScreen(MDScreen):
         )
         if success:
             print("editing successful...")
-            # cancel_notification(doc_id)
-            # schedule_notification(
-            #     task_title=task_text,
-            #     task_datetime=datetime.strptime(f"{task_date} {task_time}", "%Y-%m-%d %H:%M"),
-            #     doc_id=doc_id
-            # )
+            cancel_notification(doc_id)
+            schedule_notification(
+                task_title=task_text,
+                task_datetime=datetime.strptime(f"{task_date} {task_time}", "%Y-%m-%d %H:%M:%S"),
+                doc_id=doc_id
+            )
             for item in self.task_items:
                 if item.doc_id == doc_id:
                     item.text = task_text

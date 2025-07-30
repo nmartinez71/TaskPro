@@ -14,13 +14,15 @@ class Sidebar(MDNavigationDrawer):
 
         self.menu = MDNavigationDrawerMenu()
         self.label = MDNavigationDrawerLabel(text="Navigation")
-        self.item1 = MDNavigationDrawerItem(text = "Tasks",icon = "note-plus-outline", on_release=lambda x: self.screen_changer.switch_screen("Tasks"))
-        self.item2 = MDNavigationDrawerItem(text = "Settings",icon = "cog", on_release=lambda x: self.screen_changer.switch_screen("Settings"))
+        self.home_item = MDNavigationDrawerItem(text = "Hub",icon = "home", on_release=lambda x: self.screen_changer.switch_screen("Hub"))
+        self.task_item = MDNavigationDrawerItem(text = "Tasks",icon = "note-plus-outline", on_release=lambda x: self.screen_changer.switch_screen("Tasks"))
+        self.settings_item = MDNavigationDrawerItem(text = "Settings",icon = "cog", on_release=lambda x: self.screen_changer.switch_screen("Settings"))
         
 
         self.menu.add_widget(self.label)
-        self.menu.add_widget(self.item1)
-        self.menu.add_widget(self.item2)
+        self.menu.add_widget(self.home_item)
+        self.menu.add_widget(self.task_item)
+        self.menu.add_widget(self.settings_item)
         self.add_widget(self.menu)
 
     def toggle_sidebar(self, *args):

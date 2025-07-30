@@ -1,5 +1,8 @@
 from kivymd.uix.screen import MDScreen
+from kivy.uix.widget import Widget
+from kivymd.uix.floatlayout import MDFloatLayout
 from kivymd.uix.boxlayout import MDBoxLayout
+from kivymd.uix.anchorlayout import MDAnchorLayout
 from kivymd.uix.button import MDRaisedButton
 from kivymd.uix.textfield import MDTextField
 from kivymd.uix.pickers import MDDatePicker, MDTimePicker
@@ -7,7 +10,6 @@ from kivymd.uix.pickers import MDDatePicker, MDTimePicker
 class TaskFormScreen(MDScreen):
     def __init__(self, screen_changer=None, tasks_screen_instance = None, **kwargs):
         super().__init__(**kwargs)
-        self.adaptive_height = True
         self.screen_manager = screen_changer
         self.tasks_screen = tasks_screen_instance
         self.doc_id = None
@@ -17,11 +19,10 @@ class TaskFormScreen(MDScreen):
 
         layout = MDBoxLayout(
             orientation="vertical",
-            padding="20dp",
-            spacing="20dp",
-            size_hint_y=None
+            spacing="10dp",
+            padding="10dp",
+            size_hint=(1, 1)
         )
-        layout.bind(minimum_height=layout.setter("height"))
 
         self.task_input = MDTextField(
             hint_text="Enter task description",
@@ -45,7 +46,10 @@ class TaskFormScreen(MDScreen):
         self.task_button.bind(on_release=self.add_task)
         layout.add_widget(self.task_button)
 
+        layout.add_widget(Widget(size_hint_y=1)) #Fills empty vertical space after children are added 
+
         self.add_widget(layout)
+        
 
     def show_date_picker(self, instance):
         date_dialog = MDDatePicker()
@@ -68,13 +72,16 @@ class TaskFormScreen(MDScreen):
     def add_task(self, instance):
         print("adding task...")
         if self.tasks_screen:
-            self.tasks_screen.add_tasks(
+            success = self.tasks_screen.add_tasks(
                 task_text=self.task_input.text,
                 task_date=self.date_button.text,
                 task_time=self.time_button.text,
             )
-            self.clear_fields()
-            self.screen_manager.switch_screen("Tasks")
+            print(success)
+            if success == None:
+                print("task added!")
+                self.clear_fields()
+                self.screen_manager.switch_screen("Tasks")
 
     def edit_task(self, instance):
         if self.tasks_screen:

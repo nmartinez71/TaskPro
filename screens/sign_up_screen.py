@@ -139,7 +139,6 @@ class SignUpScreen(MDScreen):
             )
 
             if user_id:
-                # Switch screen to Login after successful registration
                 if self.screen_changer:
                     self.screen_changer.switch_root_screen("Login")
             else:

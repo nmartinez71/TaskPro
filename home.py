@@ -1,4 +1,6 @@
 from kivymd.app import MDApp
+import threading
+from kivy.core.window import Window
 from cleanup import clear_globals
 from kivy.metrics import dp
 from kivymd.uix.boxlayout import MDBoxLayout
@@ -11,10 +13,16 @@ from screens.settings_screen import SettingsScreen
 from screens.task_form_screen import TaskFormScreen
 from screens.user_login_screen import UserLoginScreen
 from screens.sign_up_screen import SignUpScreen
+from screens.hub_screen import HubScreen
+
+from utils.notifications import start_notification_loop
+from utils.tray_manager import minimize_to_tray, start_tray_thread
 
 from components.topbar import TopBar
 from components.sidebar import Sidebar
 from components.bottom_sheet import BottomMenu
+from components.bottom_handle import HandleTrigger
+
 
 class Home(MDApp):
     def build(self):
@@ -22,6 +30,7 @@ class Home(MDApp):
         self.bottom_sheet = BottomMenu(screen_changer = self)
         self.sidebar = Sidebar(screen_changer = self)
         self.topbar = TopBar(sidebar=self.sidebar)
+        self.open_sheet_button = HandleTrigger(bottom_menu=self.bottom_sheet)
 
         #UI BIG COMPONENTS
         self.root_nav_window = MDNavigationLayout()
@@ -53,13 +62,12 @@ class Home(MDApp):
         self.main_box.add_widget(self.topbar)
         self.main_box.add_widget(self.main_screen_manager)
 
-
         #root window
         self.root_screen.add_widget(self.main_box)
+        self.root_screen.add_widget(self.open_sheet_button)
         self.root_screen.add_widget(self.bottom_sheet)
         self.root_screen_manager.add_widget(self.root_screen)
         self.root_nav_window.add_widget(self.root_screen_manager)
-        self.root_nav_window.add_widget(self.sidebar)       
 
         return self.root_nav_window
 
@@ -69,30 +77,40 @@ class Home(MDApp):
         self.topbar.title = screen_name
 
     def switch_root_screen(self, screen_name: str):
-        print("switch to", screen_name)
+        print("switch root screen to", screen_name)
         self.root_screen_manager.current = screen_name
-        self.topbar.title = screen_name
 
     def change_topbar_icons(self):
         pass
 
     def on_stop(self): #wehn app is closed
         clear_globals()
+    
+    def on_start(self):
+        start_tray_thread()
+        Window.bind(on_request_close=self.on_close)
+
+    def on_close(self, *args):
+        minimize_to_tray()
+        return True  # prevent app from closing
 
     def init_user_screens(self):
         print("Intializing user screens...")
+        self.root_nav_window.add_widget(self.sidebar)
         # Create screens fresh with updated globals
+        hub_screen = HubScreen(name="Hub", screen_changer=self)
         tasks_screen = TasksScreen(name="Tasks", topbar=self.topbar, bottom_menu=self.bottom_sheet, screen_changer=self)
         task_form_screen = TaskFormScreen(name="Task Form", screen_changer=self, tasks_screen_instance=tasks_screen)
         settings_screen = SettingsScreen(name="Settings")
 
         # Clear old screens if needed
-        for screen_name in ["Tasks", "Task Form", "Settings"]:
+        for screen_name in ["Hub","Tasks", "Task Form", "Settings"]:
             if self.main_screen_manager.has_screen(screen_name):
                 screen = self.main_screen_manager.get_screen(screen_name)
                 self.main_screen_manager.remove_widget(screen)
 
         # Add the new screens
+        self.main_screen_manager.add_widget(hub_screen)
         self.main_screen_manager.add_widget(tasks_screen)
         self.main_screen_manager.add_widget(task_form_screen)
         self.main_screen_manager.add_widget(settings_screen)
