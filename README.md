@@ -32,21 +32,26 @@ This project is a KivyMD-based task tracking app for Team F.
 If you're using Visual Studio Code:
 - 1. Open VS Code.
 - 2. Click File > Open Folder...
-- 3. Select the folder where you extracted or cloned the project.
+- 3. Go into the folder where you extracted or cloned the project.
+     Select the folder (w/ same name as parent folder) the one inside of the extracted folder.
+     In our case, the bolded is the folder that should be added to VSCode.
+     TaskPro-main > **TaskPro-main** > All Project Files...
     (Optional) When prompted, click "Yes" to install any recommended extensions or trust the folder.
+     
 
 This makes it easier to view and run the commands from inside VS Code.
 
 ### 2. Run Setup Script
-- Run this command in the project folder:
+- Run this command within the project folder:
   ```bash
   python setup_dev_env.py
 
-This Setup Script will create a virtual environment and install all dependencies used in the project
+This Setup Script will create a virtual environment and install all dependencies used in the project.
+Ignore VSCode prompts to create a new environment.
 
 ### 3. Activate Environment
 
-- Run this command once the Setup Script ends (it will also suggest it at the end):
+- Copy & Run this command once the Setup Script ends (it will also suggest it at the end):
     ```bash
     kivy_venv\Scripts\activate 
 
